@@ -1,23 +1,22 @@
-# Test again this version of Node.js
+# https://raw.githubusercontent.com/sindresorhus/appveyor-node/master/appveyor.yml
 environment:
   matrix:
-  # node.js
-  - nodejs_version: "6"
-
-# Install scripts. (runs after repo cloning)
+    - nodejs_version: '8'
+    - nodejs_version: '6'
+    - nodejs_version: '4'
 install:
-  # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
-  # install modules
+  - set CI=true
+  - npm install --global npm@latest
+  - set PATH=%APPDATA%\npm;%PATH%
   - npm install
-
-# Post-install test scripts.
+matrix:
+  fast_finish: true
+build: off
+shallow_clone: true
 test_script:
-  # Output useful info for debugging
   - node --version
   - npm --version
-  # run tests
   - npm test
-
-# Don't actually build
-build: off
+cache:
+  - '%APPDATA%\npm-cache'
